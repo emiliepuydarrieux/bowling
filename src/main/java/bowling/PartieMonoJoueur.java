@@ -21,7 +21,14 @@ public class PartieMonoJoueur {
 	 * @return vrai si le joueur doit lancer à nouveau pour continuer son tour, faux sinon	
 	 */
 	public boolean enregistreLancer(int nombreDeQuillesAbattues) {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		int c=1;
+		if (nombreDeQuillesAbattues==10||c==2){
+			return false;
+		}
+		{
+			c+=1;
+			return true;
+		}
 	}
 
 	/**
@@ -30,8 +37,21 @@ public class PartieMonoJoueur {
 	 * abattent 0 quille.
 	 * @return Le score du joueur
 	 */
-	public int score() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+	public int score(int nombreDeQuillesAbattues) {
+		int s=0;
+		int tour=10;
+		for (int i=1;i<=tour;i++){
+			int scoreParTour=0;
+			for (int lancer=1;lancer<=2;lancer++){
+				s+=nombreDeQuillesAbattues;
+				scoreParTour+=nombreDeQuillesAbattues;
+
+				}
+				}
+					
+
+		return s;
+
 	}
 
 	/**
