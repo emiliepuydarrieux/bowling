@@ -35,10 +35,16 @@ public class PartieMonoJoueur {
 			throw new IllegalStateException("La partie est terminée");
 		}
 
-		if(!estTerminee()){
-
+		Tour tour = tours.getLast();
+		tour.ajoutLancer(nombreDeQuillesAbattues);
+		if (tour.termine() && tourCourant < nbTours) {
+			tourCourant++;
+			tours.add(new Tour(tourCourant == nbTours));
+		} else if (tour.termine() && tourCourant == nbTours) {
+			tourCourant = 0;
 		}
-		return true;
+
+		return !tour.termine();
 	}
 
 	/**
@@ -48,16 +54,53 @@ public class PartieMonoJoueur {
 	 * @return Le score du joueur
 	 */
 	public int score() {
-		return 2;
-		
+		Integer scoreTotal = 0;
 
+		for (int i = 0; i < tours.size(); i++) {
+			Tour tour = tours.get(i);
+			ArrayList<Integer> quilles = quilleTour(i);
+
+			for (Integer q : quilles) {
+				scoreTotal += q;
+			}
+
+			if (i < 9) {
+				if (tour.strike()) {
+					ArrayList<Integer> next = quilleTour(i + 1);
+					scoreTotal += next.get(0);
+
+					if (next.size() > 1) {
+						scoreTotal += next.get(1);
+					} else if (i + 2 < tours.size()) {
+						ArrayList<Integer> nextNext = quilleTour(i + 2);
+						scoreTotal += nextNext.get(0);
+					}
+				} else if (tour.spare()) {
+					scoreTotal += quilleTour(i + 1).get(0);
+				}
+			}
+		}
+
+		return scoreTotal;
 	}
+
+	private ArrayList<Integer> quilleTour(int indexTour) {
+		if (tours.get(indexTour) == null) {
+			ArrayList<Integer> quillesVides = new ArrayList<Integer>();
+			quillesVides.add(0);
+			quillesVides.add(0);
+			quillesVides.add(0);
+			return quillesVides;
+		}
+		return tours.get(indexTour).getLancers();
+	}
+
 
 	/**
 	 * @return vrai si la partie est terminée pour ce joueur, faux sinon
 	 */
 	public boolean estTerminee() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		return tourCourant == 0;
 	}
 
 
@@ -65,7 +108,7 @@ public class PartieMonoJoueur {
 	 * @return Le numéro du tour courant [1..10], ou 0 si le jeu est fini
 	 */
 	public int numeroTourCourant() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		return tourCourant;
 	}
 
 	/**
@@ -73,7 +116,11 @@ public class PartieMonoJoueur {
 	 *         est fini
 	 */
 	public int numeroProchainLancer() {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		if (estTerminee()) {
+			return 0;
+		}
+		Tour tour = tours.get(tours.size() - 1);
+		return tour.numLancerCourant() + 1;
 	}
 
 }
